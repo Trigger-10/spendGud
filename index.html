@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>spendGud – Spending Tracker</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f9d7a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="spendGud">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f7f6;--card:#fff;--ink:#12302b;--mute:#6b8580;--line:#e1ebe8;--brand:#0f9d7a;--brand2:#0b7a60;--danger:#d9534f;--shadow:0 4px 16px rgba(18,48,43,.08)}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1816;--card:#16251f;--ink:#e6f3ef;--mute:#8fa9a3;--line:#243630;--brand:#2fcfa6;--brand2:#1fae88;--shadow:none}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.4;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.wrap{max-width:720px;margin:0 auto;padding:16px}
+[hidden]{display:none!important}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}
+h1{font-size:1.25rem;margin:0}h1 span{color:var(--brand)}
+select,input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+select:focus,input:focus{outline:2px solid var(--brand);border-color:transparent}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px}
+.hero{background:linear-gradient(135deg,var(--brand2),var(--brand));color:#fff;border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+.hero small{opacity:.85}.hero .big{font-size:2.2rem;font-weight:700;margin:2px 0 10px}
+.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{flex:1 1 110px;background:rgba(255,255,255,.18);border-radius:12px;padding:8px 12px}.stat b{display:block}
+.card{background:var(--card);border-radius:16px;padding:16px;margin-top:14px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.card h2{font-size:1rem;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
+@media(max-width:480px){.grid{grid-template-columns:1fr}}
+.pri{background:var(--brand);color:#fff;padding:12px;font-weight:600;width:100%}.pri:hover{background:var(--brand2)}
+.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:11px;width:100%;display:flex;gap:10px;justify-content:center;align-items:center;font-weight:500}
+.sm{background:var(--card);color:var(--mute);border:1px solid var(--line);padding:7px 12px;width:auto}
+.bar{display:flex;height:10px;border-radius:6px;overflow:hidden;background:var(--line);margin-bottom:10px}
+.leg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.85rem;color:var(--mute)}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:6px}
+.chip{background:var(--bg);color:var(--mute);border:1px solid var(--line);padding:6px 12px;white-space:nowrap;border-radius:20px}
+.chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.day{display:flex;justify-content:space-between;font-size:.85rem;color:var(--mute);margin:16px 0 4px;font-weight:600}
+.row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:none}
+.info{flex:1;min-width:0}.info div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.info small{color:var(--mute)}
+.amt{font-weight:600}.del{background:none;color:var(--mute);padding:6px}.del:hover{color:var(--danger)}
+.empty{text-align:center;color:var(--mute);padding:24px 0}
+#auth{min-height:90vh;display:grid;place-items:center}
+#auth .card{width:100%;max-width:400px}
+.or{text-align:center;color:var(--mute);font-size:.85rem;margin:12px 0}
+.pw{position:relative}.pw input{padding-right:70px}.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;color:var(--brand);padding:6px 10px;font-size:.85rem;font-weight:600}
+.msg{font-size:.88rem;margin:10px 0 0;min-height:1.2em;color:var(--danger)}.msg.ok{color:var(--brand)}
+.sw{text-align:center;margin-top:12px;font-size:.9rem;color:var(--mute)}.sw a{color:var(--brand);cursor:pointer;font-weight:600}
+.live{font-size:.75rem;color:var(--mute)}.live i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--brand);margin-right:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- AUTH -->
+<section id="auth" hidden>
+<div class="card">
+<h1 style="text-align:center;font-size:1.6rem">spend<span>Gud</span></h1>
+<p style="text-align:center;color:var(--mute);margin:6px 0 18px" id="authSub">Welcome back. Log in to see your spending.</p>
+<button class="ghost" id="gBtn"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.8 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Continue with Google</button>
+<div class="or">or use your email</div>
+<div class="grid" style="grid-template-columns:1fr">
+<input id="name" type="text" placeholder="Your name" autocomplete="given-name" maxlength="40" hidden>
+<input id="email" type="email" placeholder="Email" autocomplete="email">
+<div class="pw"><input id="pass" type="password" placeholder="Password (min. 6 characters)" autocomplete="current-password"><button type="button" class="eye" id="eye" aria-label="Show password">Show</button></div>
+<button class="pri" id="authBtn">Log in</button>
+</div>
+<div class="msg" id="authMsg"></div>
+<div class="sw"><span id="swTxt">New here?</span> <a id="swLink">Create an account</a></div>
+</div>
+</section>
+
+<!-- APP -->
+<section id="app" hidden>
+<header>
+<h1>spend<span>Gud</span></h1>
+<div style="display:flex;gap:8px;align-items:center"><div style="width:84px"><select id="cur" aria-label="Currency"><option>GH₵</option><option>$</option><option>€</option><option>£</option><option>₦</option></select></div><button class="sm" id="out">Log out</button></div>
+</header>
+<div style="margin:0 0 12px"><div id="greet" style="font-size:1.35rem;font-weight:700"></div><div class="live" id="who"></div></div>
+<section class="hero">
+<small>Total spent</small><div class="big" id="total">0.00</div>
+<div class="stats"><div class="stat"><small>This month</small><b id="month">0.00</b></div><div class="stat"><small>Today</small><b id="today">0.00</b></div><div class="stat"><small>Entries</small><b id="count">0</b></div></div>
+</section>
+<section class="card">
+<h2>Add expense</h2>
+<div class="grid">
+<input id="amount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount">
+<select id="cat"></select>
+<input id="note" class="full" type="text" placeholder="What was it for? (optional)" maxlength="60">
+<input id="date" class="full" type="date" aria-label="Date">
+<button class="pri full" id="addBtn">+ Add expense</button>
+</div>
+<div class="msg" id="appMsg"></div>
+</section>
+<section class="card" id="breakdown" hidden><h2>Where your money goes</h2><div class="bar" id="bar"></div><div class="leg" id="leg"></div></section>
+<section class="card"><h2>History <span class="live" style="float:right"><i></i>Live</span></h2><div class="chips" id="chips"></div><div id="list"></div></section>
+</section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+// ====== 1) PASTE YOUR SUPABASE DETAILS HERE (Project Settings > API) ======
+const SUPABASE_URL="https://hajksrprclhelyxavggw.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable__beP-T6sW41Tpi1G0o4CZw_dePxm946";
+// ==========================================================================
+let sb=null,initErr="";
+try{
+  if(typeof supabase==="undefined")throw new Error("The Supabase library did not load. Check your internet connection or turn off any ad blocker, then refresh.");
+  if(!/^https:\/\/[^\s"]+$/.test(SUPABASE_URL)||SUPABASE_URL.includes("YOUR_SUPABASE")||SUPABASE_ANON_KEY.includes("YOUR_SUPABASE")||SUPABASE_ANON_KEY.length<30)throw new Error("Add your Supabase Project URL and anon key in the two lines near the top of this script (inside the quotes), then save and redeploy.");
+  sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+}catch(e){initErr=e.message}
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+const $=id=>document.getElementById(id);
+const CATS={Food:["🍽️","#f59e0b"],Groceries:["🛒","#0f9d7a"],"Airtime & Data":["📱","#3b82f6"],Repairs:["🔧","#8b5cf6"],Transport:["🚌","#ec4899"],Other:["📦","#64748b"]};
+let items=[],cur="GH₵",filter="All",user=null,channel=null,signup=false;
+try{cur=localStorage.getItem("ff_cur")||cur}catch(e){}
+$("cur").value=cur;
+$("cat").innerHTML=Object.keys(CATS).map(c=>`<option>${c}</option>`).join("");
+const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+$("date").value=today();
+const money=n=>cur+" "+n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+const sum=a=>a.reduce((s,i)=>s+Number(i.amount),0);
+const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const say=(el,t,ok)=>{el.textContent=t;el.className="msg"+(ok?" ok":"")};
+
+// ---- Auth UI ----
+function mode(s){signup=s;$("authBtn").textContent=s?"Sign up":"Log in";$("authSub").textContent=s?"Create your account to start tracking.":"Welcome back. Log in to see your spending.";$("swTxt").textContent=s?"Already have an account?":"New here?";$("swLink").textContent=s?"Log in":"Create an account";$("name").hidden=!s;$("pass").autocomplete=s?"new-password":"current-password";say($("authMsg"),"")}
+$("swLink").onclick=()=>mode(!signup);
+$("eye").onclick=()=>{const hide=$("pass").type==="password";$("pass").type=hide?"text":"password";$("eye").textContent=hide?"Hide":"Show";$("eye").setAttribute("aria-label",hide?"Hide password":"Show password")};
+$("authBtn").onclick=async()=>{
+  const email=$("email").value.trim(),password=$("pass").value,name=$("name").value.trim();
+  if(signup&&!name)return say($("authMsg"),"Please enter your name.");
+  if(!email||password.length<6)return say($("authMsg"),"Enter a valid email and a password of at least 6 characters.");
+  $("authBtn").disabled=true;
+  const {data,error}=signup?await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin,data:{full_name:name}}}):await sb.auth.signInWithPassword({email,password});
+  $("authBtn").disabled=false;
+  if(error)return say($("authMsg"),error.message);
+  if(signup&&!data.session)say($("authMsg"),"Check your email to confirm your account, then log in.",true);
+};
+$("gBtn").onclick=async()=>{const {error}=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin}});if(error)say($("authMsg"),error.message)};
+$("out").onclick=()=>sb.auth.signOut();
+$("cur").onchange=e=>{cur=e.target.value;try{localStorage.setItem("ff_cur",cur)}catch(x){}render()};
+
+// ---- Session handling ----
+$("auth").hidden=false; // always show the login screen first
+if(!sb){
+  say($("authMsg"),"Setup problem: "+initErr);
+  ["authBtn","gBtn"].forEach(id=>$(id).disabled=true);
+}else{
+  sb.auth.onAuthStateChange((_e,session)=>{
+    const u=session?.user||null;
+    if(u&&(!user||user.id!==u.id)){user=u;start()}
+    else if(!u){user=null;items=[];if(channel){sb.removeChannel(channel);channel=null}$("app").hidden=true;$("auth").hidden=false}
+  });
+  sb.auth.getSession().then(({data})=>{if(!data.session){$("auth").hidden=false}}).catch(e=>say($("authMsg"),e.message));
+}
+
+function greeting(){const h=new Date().getHours();return h>=5&&h<12?"Good morning":h<17&&h>=12?"Good afternoon":"Good evening"}
+function firstName(u){const m=u.user_metadata||{};let n=(m.full_name||m.name||"").trim().split(/\s+/)[0]||(u.email||"").split("@")[0].split(/[\s._\-0-9]+/)[0]||"there";return n.charAt(0).toUpperCase()+n.slice(1)}
+async function start(){
+  $("auth").hidden=true;$("app").hidden=false;
+  $("greet").textContent=greeting()+", "+firstName(user)+" 👋";
+  $("who").innerHTML="<i></i>"+esc(user.email);
+  await load();
+  if(channel)sb.removeChannel(channel);
+  channel=sb.channel("exp-"+user.id).on("postgres_changes",{event:"*",schema:"public",table:"expenses",filter:"user_id=eq."+user.id},load).subscribe();
+}
+async function load(){
+  const {data,error}=await sb.from("expenses").select("*").order("spent_on",{ascending:false}).order("created_at",{ascending:false});
+  if(error)return say($("appMsg"),error.message);
+  items=data;render();
+}
+
+// ---- Expenses ----
+$("addBtn").onclick=async()=>{
+  const amount=parseFloat($("amount").value);
+  if(!(amount>0)){$("amount").focus();return}
+  $("addBtn").disabled=true;
+  const {error}=await sb.from("expenses").insert({amount,category:$("cat").value,note:$("note").value.trim(),spent_on:$("date").value||today()});
+  $("addBtn").disabled=false;
+  if(error)return say($("appMsg"),error.message);
+  say($("appMsg"),"");$("amount").value="";$("note").value="";load();
+};
+async function del(id){const {error}=await sb.from("expenses").delete().eq("id",id);if(error)say($("appMsg"),error.message);else load()}
+
+function render(){
+  const t=today(),m=t.slice(0,7);
+  $("total").textContent=money(sum(items));
+  $("month").textContent=money(sum(items.filter(i=>i.spent_on.startsWith(m))));
+  $("today").textContent=money(sum(items.filter(i=>i.spent_on===t)));
+  $("count").textContent=items.length;
+  const by={},tot=sum(items);items.forEach(i=>by[i.category]=(by[i.category]||0)+Number(i.amount));
+  $("breakdown").hidden=!items.length;
+  const col=c=>(CATS[c]||CATS.Other);
+  const ents=Object.entries(by).sort((a,b)=>b[1]-a[1]);
+  $("bar").innerHTML=ents.map(([c,v])=>`<div style="width:${v/tot*100}%;background:${col(c)[1]}"></div>`).join("");
+  $("leg").innerHTML=ents.map(([c,v])=>`<span><i class="dot" style="background:${col(c)[1]}"></i>${esc(c)} ${Math.round(v/tot*100)}%</span>`).join("");
+  $("chips").innerHTML=["All",...Object.keys(CATS)].map(c=>`<button class="chip ${c===filter?"on":""}" data-c="${c}">${c}</button>`).join("");
+  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filter=b.dataset.c;render()});
+  const shown=items.filter(i=>filter==="All"||i.category===filter);
+  if(!shown.length){$("list").innerHTML='<div class="empty">No expenses yet. Add your first one above.</div>';return}
+  const days={};shown.forEach(i=>(days[i.spent_on]=days[i.spent_on]||[]).push(i));
+  $("list").innerHTML=Object.keys(days).map(d=>{
+    const label=d===t?"Today":new Date(d+"T00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+    return `<div class="day"><span>${label}</span><span>${money(sum(days[d]))}</span></div>`+days[d].map(i=>`<div class="row"><div class="ico" style="background:${col(i.category)[1]}22">${col(i.category)[0]}</div><div class="info"><div>${esc(i.note||i.category)}</div><small>${esc(i.category)}</small></div><div class="amt">${money(Number(i.amount))}</div><button class="del" aria-label="Delete" onclick="del('${i.id}')">✕</button></div>`).join("");
+  }).join("");
+}
+</script>
+</body>
+</html>
