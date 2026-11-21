@@ -35,3 +35,6 @@ do $$ begin
   alter publication supabase_realtime add table public.expenses;
 exception when duplicate_object then null;
 end $$;
+
+-- Added for the calendar / time feature (safe to run again)
+alter table public.expenses add column if not exists spent_time time;

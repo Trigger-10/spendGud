@@ -27,188 +27,329 @@ button{font:inherit;cursor:pointer;border:0;border-radius:10px}
 .hero{background:linear-gradient(135deg,var(--brand2),var(--brand));color:#fff;border-radius:18px;padding:20px;box-shadow:var(--shadow)}
 .hero small{opacity:.85}.hero .big{font-size:2.2rem;font-weight:700;margin:2px 0 10px}
 .stats{display:flex;gap:10px;flex-wrap:wrap}.stat{flex:1 1 110px;background:rgba(255,255,255,.18);border-radius:12px;padding:8px 12px}.stat b{display:block}
+.bgt{margin-top:12px;font-size:.85rem}.bb{height:8px;border-radius:5px;background:rgba(255,255,255,.28);margin-top:5px;overflow:hidden}.bb div{height:100%;border-radius:5px;transition:width .3s}
 .card{background:var(--card);border-radius:16px;padding:16px;margin-top:14px;box-shadow:var(--shadow);border:1px solid var(--line)}
 .card h2{font-size:1rem;margin:0 0 12px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
-@media(max-width:480px){.grid{grid-template-columns:1fr}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.grid.keep{grid-template-columns:1fr 1fr}}
 .pri{background:var(--brand);color:#fff;padding:12px;font-weight:600;width:100%}.pri:hover{background:var(--brand2)}
 .ghost{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:11px;width:100%;display:flex;gap:10px;justify-content:center;align-items:center;font-weight:500}
 .sm{background:var(--card);color:var(--mute);border:1px solid var(--line);padding:7px 12px;width:auto}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;margin-top:14px}
+.tabs button{flex:1;background:none;color:var(--mute);padding:9px;font-weight:600}.tabs button.on{background:var(--brand);color:#fff}
 .bar{display:flex;height:10px;border-radius:6px;overflow:hidden;background:var(--line);margin-bottom:10px}
 .leg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.85rem;color:var(--mute)}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:6px}
 .chip{background:var(--bg);color:var(--mute);border:1px solid var(--line);padding:6px 12px;white-space:nowrap;border-radius:20px}
 .chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
 .day{display:flex;justify-content:space-between;font-size:.85rem;color:var(--mute);margin:16px 0 4px;font-weight:600}
-.row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
-.ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:none}
-.info{flex:1;min-width:0}.info div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.info small{color:var(--mute)}
+.row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+.ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:none;margin-right:4px}
+.info{flex:1;min-width:0;cursor:pointer}.info div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.info small{color:var(--mute)}
 .amt{font-weight:600}.del{background:none;color:var(--mute);padding:6px}.del:hover{color:var(--danger)}
-.empty{text-align:center;color:var(--mute);padding:24px 0}
-#auth{min-height:90vh;display:grid;place-items:center}
-#auth .card{width:100%;max-width:400px}
-.or{text-align:center;color:var(--mute);font-size:.85rem;margin:12px 0}
+.empty{text-align:center;color:var(--mute);padding:20px 0}
+.calh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.calh b{font-size:1.05rem}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.wd{text-align:center;font-size:.72rem;color:var(--mute);padding-bottom:2px}
+.cd{aspect-ratio:1/1.05;background:var(--bg);color:var(--ink);border:1px solid transparent;padding:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border-radius:10px}
+.cd b{font-size:.9rem;font-weight:600}.cd i{font-style:normal;font-size:.62rem;color:var(--brand);font-weight:600;min-height:.8em}
+.cd.has{background:color-mix(in srgb,var(--brand) 16%,var(--card))}
+.cd.td b{color:var(--brand)}.cd.sel{border-color:var(--brand);outline:2px solid var(--brand)}
+.ins{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}.ins:last-child{border:0}.ins span{font-size:1.4rem}
 .pw{position:relative}.pw input{padding-right:70px}.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;color:var(--brand);padding:6px 10px;font-size:.85rem;font-weight:600}
+#auth{min-height:90vh;display:grid;place-items:center}#auth .card{width:100%;max-width:400px}
+.or{text-align:center;color:var(--mute);font-size:.85rem;margin:12px 0}
 .msg{font-size:.88rem;margin:10px 0 0;min-height:1.2em;color:var(--danger)}.msg.ok{color:var(--brand)}
-.sw{text-align:center;margin-top:12px;font-size:.9rem;color:var(--mute)}.sw a{color:var(--brand);cursor:pointer;font-weight:600}
+.sw{text-align:center;margin-top:12px;font-size:.9rem;color:var(--mute)}.sw a,.fg a{color:var(--brand);cursor:pointer;font-weight:600}
+.fg{text-align:right;font-size:.85rem;margin-top:-2px}
 .live{font-size:.75rem;color:var(--mute)}.live i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--brand);margin-right:4px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes shimmer{from{background-position:-400px 0}to{background-position:400px 0}}
+button{transition:transform .12s ease,background .2s ease}button:active{transform:scale(.97)}
+.busy{position:relative;color:transparent!important;pointer-events:none}
+.busy::after{content:"";position:absolute;inset:0;margin:auto;width:20px;height:20px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+.ghost.busy::after{border-color:var(--line);border-top-color:var(--brand)}
+#auth .card{animation:fadeUp .5s ease both}
+.enter{animation:fadeUp .45s ease both}.fade{animation:fadeUp .25s ease both}
+.row.fresh{animation:fadeUp .3s ease both}
+.sk{height:52px;border-radius:12px;margin:10px 0;background:linear-gradient(90deg,var(--line) 25%,color-mix(in srgb,var(--line) 45%,var(--card)) 50%,var(--line) 75%);background-size:800px 100%;animation:shimmer 1.3s infinite linear}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<!-- AUTH -->
 <section id="auth" hidden>
 <div class="card">
 <h1 style="text-align:center;font-size:1.6rem">spend<span>Gud</span></h1>
-<p style="text-align:center;color:var(--mute);margin:6px 0 18px" id="authSub">Welcome back. Log in to see your spending.</p>
-<button class="ghost" id="gBtn"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.8 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Continue with Google</button>
-<div class="or">or use your email</div>
+<p style="text-align:center;color:var(--mute);margin:6px 0 18px" id="authSub"></p>
+<div id="social"><button class="ghost" id="gBtn"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.8 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Continue with Google</button><div class="or">or use your email</div></div>
 <div class="grid" style="grid-template-columns:1fr">
 <input id="name" type="text" placeholder="Your name" autocomplete="given-name" maxlength="40" hidden>
 <input id="email" type="email" placeholder="Email" autocomplete="email">
-<div class="pw"><input id="pass" type="password" placeholder="Password (min. 6 characters)" autocomplete="current-password"><button type="button" class="eye" id="eye" aria-label="Show password">Show</button></div>
-<button class="pri" id="authBtn">Log in</button>
+<div class="pw" id="pwBox"><input id="pass" type="password" placeholder="Password (min. 6 characters)"><button type="button" class="eye" id="eye" aria-label="Show password">Show</button></div>
+<div class="fg" id="fgt"><a id="fgLink">Forgot password?</a></div>
+<button class="pri" id="authBtn"></button>
 </div>
 <div class="msg" id="authMsg"></div>
-<div class="sw"><span id="swTxt">New here?</span> <a id="swLink">Create an account</a></div>
+<div class="sw" id="sw"><span id="swTxt"></span> <a id="swLink"></a></div>
 </div>
 </section>
 
-<!-- APP -->
 <section id="app" hidden>
-<header>
-<h1>spend<span>Gud</span></h1>
-<div style="display:flex;gap:8px;align-items:center"><div style="width:84px"><select id="cur" aria-label="Currency"><option>GH₵</option><option>$</option><option>€</option><option>£</option><option>₦</option></select></div><button class="sm" id="out">Log out</button></div>
-</header>
+<header><h1>spend<span>Gud</span></h1>
+<div style="display:flex;gap:8px;align-items:center"><div style="width:84px"><select id="cur" aria-label="Currency"><option>GH₵</option><option>$</option><option>€</option><option>£</option><option>₦</option></select></div><button class="sm" id="out">Log out</button></div></header>
 <div style="margin:0 0 12px"><div id="greet" style="font-size:1.35rem;font-weight:700"></div><div class="live" id="who"></div></div>
 <section class="hero">
 <small>Total spent</small><div class="big" id="total">0.00</div>
 <div class="stats"><div class="stat"><small>This month</small><b id="month">0.00</b></div><div class="stat"><small>Today</small><b id="today">0.00</b></div><div class="stat"><small>Entries</small><b id="count">0</b></div></div>
+<div class="bgt" id="bgt" hidden><span id="bgtTxt"></span><div class="bb"><div id="bgtFill"></div></div></div>
 </section>
-<section class="card">
-<h2>Add expense</h2>
-<div class="grid">
+<nav class="tabs" id="tabs"><button data-t="home" class="on">Home</button><button data-t="cal">Calendar</button><button data-t="ins">Insights</button></nav>
+
+<div id="t-home">
+<section class="card" id="form"><h2 id="formTitle">Add expense</h2>
+<div class="grid keep">
 <input id="amount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount">
 <select id="cat"></select>
 <input id="note" class="full" type="text" placeholder="What was it for? (optional)" maxlength="60">
-<input id="date" class="full" type="date" aria-label="Date">
+<input id="date" type="date" aria-label="Date"><input id="time" type="time" aria-label="Time">
 <button class="pri full" id="addBtn">+ Add expense</button>
-</div>
-<div class="msg" id="appMsg"></div>
-</section>
-<section class="card" id="breakdown" hidden><h2>Where your money goes</h2><div class="bar" id="bar"></div><div class="leg" id="leg"></div></section>
+<button class="sm full" id="cancelBtn" hidden>Cancel editing</button>
+</div><div class="msg" id="appMsg"></div></section>
 <section class="card"><h2>History <span class="live" style="float:right"><i></i>Live</span></h2><div class="chips" id="chips"></div><div id="list"></div></section>
+</div>
+
+<div id="t-cal" hidden>
+<section class="card"><div class="calh"><button class="sm" id="pm" aria-label="Previous month">‹</button><b id="calTitle"></b><button class="sm" id="nm" aria-label="Next month">›</button></div>
+<div class="cg" id="calGrid"></div><div class="live" style="margin-top:10px">Month total: <b id="calTotal"></b></div></section>
+<section class="card"><h2 id="dayTitle"></h2><div id="dayList"></div></section>
+</div>
+
+<div id="t-ins" hidden>
+<section class="card"><h2>Monthly budget</h2><div class="grid keep"><input id="budIn" type="number" inputmode="decimal" min="0" placeholder="e.g. 800"><button class="pri" id="budBtn">Set budget</button></div><div class="msg" id="budMsg"></div><small style="color:var(--mute)">Enter 0 to remove your budget.</small></section>
+<section class="card"><h2>Insights</h2><div id="insights"></div></section>
+<section class="card" id="breakdown"><h2>Where your money goes</h2><div class="bar" id="bar"></div><div class="leg" id="leg"></div></section>
+<section class="card"><h2>Your data</h2><button class="ghost" id="csvBtn">⬇ Download all expenses (CSV)</button></section>
+</div>
 </section>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
 <script>
-// ====== 1) PASTE YOUR SUPABASE DETAILS HERE (Project Settings > API) ======
-const SUPABASE_URL="https://hajksrprclhelyxavggw.supabase.co";
-const SUPABASE_ANON_KEY="sb_publishable__beP-T6sW41Tpi1G0o4CZw_dePxm946";
-// ==========================================================================
+const $=id=>document.getElementById(id);
 let sb=null,initErr="";
 try{
   if(typeof supabase==="undefined")throw new Error("The Supabase library did not load. Check your internet connection or turn off any ad blocker, then refresh.");
-  if(!/^https:\/\/[^\s"]+$/.test(SUPABASE_URL)||SUPABASE_URL.includes("YOUR_SUPABASE")||SUPABASE_ANON_KEY.includes("YOUR_SUPABASE")||SUPABASE_ANON_KEY.length<30)throw new Error("Add your Supabase Project URL and anon key in the two lines near the top of this script (inside the quotes), then save and redeploy.");
-  sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  if(typeof SUPABASE_URL==="undefined"||typeof SUPABASE_ANON_KEY==="undefined")throw new Error("config.js is missing. Upload config.js (with your Supabase URL and key) next to index.html.");
+  const U=SUPABASE_URL.trim().replace(/\/rest\/v1\/?$/,"").replace(/\/+$/,""),K=SUPABASE_ANON_KEY.trim();
+  if(U.includes("YOUR_SUPABASE"))throw new Error("The Project URL in config.js still has the placeholder. Paste your URL between the quotes.");
+  if(!/^https:\/\/[^\s]+\.[^\s]+$/.test(U))throw new Error("The Project URL looks wrong. It should look like https://abcdxyz.supabase.co");
+  if(K.includes("YOUR_SUPABASE"))throw new Error("The key in config.js still has the placeholder. Paste your sb_publishable_ key between the quotes.");
+  if(K.length<20||/\s/.test(K))throw new Error("The key looks wrong. Copy the whole key again, with no spaces or line breaks.");
+  sb=supabase.createClient(U,K);
 }catch(e){initErr=e.message}
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
-const $=id=>document.getElementById(id);
+
 const CATS={Food:["🍽️","#f59e0b"],Groceries:["🛒","#0f9d7a"],"Airtime & Data":["📱","#3b82f6"],Repairs:["🔧","#8b5cf6"],Transport:["🚌","#ec4899"],Other:["📦","#64748b"]};
-let items=[],cur="GH₵",filter="All",user=null,channel=null,signup=false;
+const col=c=>CATS[c]||CATS.Other;
+let items=[],cur="GH₵",filter="All",user=null,channel=null,am="login",tab="home",editId=null,recovering=/type=recovery/.test(location.hash);
 try{cur=localStorage.getItem("ff_cur")||cur}catch(e){}
 $("cur").value=cur;
 $("cat").innerHTML=Object.keys(CATS).map(c=>`<option>${c}</option>`).join("");
-const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
-$("date").value=today();
+const pad=n=>String(n).padStart(2,"0");
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
+const nowT=()=>{const d=new Date();return pad(d.getHours())+":"+pad(d.getMinutes())};
+let cy=+today().slice(0,4),cm=+today().slice(5,7)-1,sel=today();
 const money=n=>cur+" "+n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+const short=n=>n>=1000?(n/1000).toFixed(1)+"k":String(Math.round(n));
 const sum=a=>a.reduce((s,i)=>s+Number(i.amount),0);
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const say=(el,t,ok)=>{el.textContent=t;el.className="msg"+(ok?" ok":"")};
+function busy(b,on){clearTimeout(b._t);b.classList.toggle("busy",on);b.disabled=on;if(on)b._t=setTimeout(()=>busy(b,false),15000)}
+function countTo(el,to){const from=el._v||0;el._v=to;if(from===to||matchMedia("(prefers-reduced-motion:reduce)").matches){el.textContent=money(to);return}
+  const t0=performance.now();(function f(t){const p=Math.min((t-t0)/600,1),e=1-Math.pow(1-p,3);el.textContent=money(from+(to-from)*e);if(p<1)requestAnimationFrame(f)})(t0)}
+const seen=new Set();
+const fmtT=t=>{if(!t)return"";const [h,m]=t.split(":"),d=new Date();d.setHours(+h,+m);return d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})};
+const label=d=>d===today()?"Today":new Date(d+"T00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"});
 
-// ---- Auth UI ----
-function mode(s){signup=s;$("authBtn").textContent=s?"Sign up":"Log in";$("authSub").textContent=s?"Create your account to start tracking.":"Welcome back. Log in to see your spending.";$("swTxt").textContent=s?"Already have an account?":"New here?";$("swLink").textContent=s?"Log in":"Create an account";$("name").hidden=!s;$("pass").autocomplete=s?"new-password":"current-password";say($("authMsg"),"")}
-$("swLink").onclick=()=>mode(!signup);
-$("eye").onclick=()=>{const hide=$("pass").type==="password";$("pass").type=hide?"text":"password";$("eye").textContent=hide?"Hide":"Show";$("eye").setAttribute("aria-label",hide?"Hide password":"Show password")};
+/* ---------- Auth ---------- */
+const M={login:["Log in","Welcome back. Log in to see your spending."],signup:["Sign up","Create your account to start tracking."],forgot:["Send reset link","Enter your email and we’ll send you a link to reset your password."],reset:["Save new password","Choose a new password for your account."]};
+function mode(m){am=m;$("authBtn").textContent=M[m][0];$("authSub").textContent=M[m][1];
+  $("name").hidden=m!=="signup";$("email").hidden=m==="reset";$("pwBox").hidden=m==="forgot";$("fgt").hidden=m!=="login";
+  $("social").hidden=m==="forgot"||m==="reset";$("sw").hidden=m==="reset";
+  $("swTxt").textContent=m==="login"?"New here?":m==="signup"?"Already have an account?":"Remembered it?";
+  $("swLink").textContent=m==="login"?"Create an account":m==="signup"?"Log in":"Back to log in";
+  $("pass").autocomplete=m==="login"?"current-password":"new-password";say($("authMsg"),"")}
+mode("login");
+$("swLink").onclick=()=>mode(am==="login"?"signup":"login");
+$("fgLink").onclick=()=>mode("forgot");
+$("eye").onclick=()=>{const h=$("pass").type==="password";$("pass").type=h?"text":"password";$("eye").textContent=h?"Hide":"Show";$("eye").setAttribute("aria-label",h?"Hide password":"Show password")};
 $("authBtn").onclick=async()=>{
-  const email=$("email").value.trim(),password=$("pass").value,name=$("name").value.trim();
-  if(signup&&!name)return say($("authMsg"),"Please enter your name.");
-  if(!email||password.length<6)return say($("authMsg"),"Enter a valid email and a password of at least 6 characters.");
-  $("authBtn").disabled=true;
-  const {data,error}=signup?await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin,data:{full_name:name}}}):await sb.auth.signInWithPassword({email,password});
-  $("authBtn").disabled=false;
-  if(error)return say($("authMsg"),error.message);
-  if(signup&&!data.session)say($("authMsg"),"Check your email to confirm your account, then log in.",true);
+  const email=$("email").value.trim(),password=$("pass").value,name=$("name").value.trim(),m=$("authMsg"),b=$("authBtn");
+  const fail=t=>{busy(b,false);say(m,t)};
+  let r;
+  if(am==="forgot"){
+    if(!email)return say(m,"Enter your email first.");
+    busy(b,true);r=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin});busy(b,false);
+    return say(m,r.error?r.error.message:"Done. Check your email for the reset link.",!r.error);
+  }
+  if(am==="reset"){
+    if(password.length<6)return say(m,"Use a password of at least 6 characters.");
+    busy(b,true);r=await sb.auth.updateUser({password});
+    if(r.error)return fail(r.error.message);
+    recovering=false;history.replaceState(null,"",location.pathname);user=r.data.user;start();return;
+  }
+  if(!email||password.length<6)return say(m,"Enter a valid email and a password of at least 6 characters.");
+  if(am==="signup"&&!name)return say(m,"Please enter your name.");
+  busy(b,true);say(m,"");
+  r=am==="signup"?await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin,data:{full_name:name}}}):await sb.auth.signInWithPassword({email,password});
+  if(r.error)return fail(r.error.message);
+  if(am==="signup"&&!r.data.session){busy(b,false);say(m,"Check your email to confirm your account, then log in.",true)}
 };
-$("gBtn").onclick=async()=>{const {error}=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin}});if(error)say($("authMsg"),error.message)};
+$("gBtn").onclick=async()=>{busy($("gBtn"),true);const {error}=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin}});if(error){busy($("gBtn"),false);say($("authMsg"),error.message)}};
 $("out").onclick=()=>sb.auth.signOut();
 $("cur").onchange=e=>{cur=e.target.value;try{localStorage.setItem("ff_cur",cur)}catch(x){}render()};
 
-// ---- Session handling ----
-$("auth").hidden=false; // always show the login screen first
-if(!sb){
-  say($("authMsg"),"Setup problem: "+initErr);
-  ["authBtn","gBtn"].forEach(id=>$(id).disabled=true);
-}else{
-  sb.auth.onAuthStateChange((_e,session)=>{
+$("auth").hidden=false;
+if(!sb){say($("authMsg"),"Setup problem: "+initErr);["authBtn","gBtn"].forEach(id=>$(id).disabled=true)}
+else{
+  sb.auth.onAuthStateChange((ev,session)=>{
     const u=session?.user||null;
+    if(ev==="PASSWORD_RECOVERY")recovering=true;
+    if(recovering&&u){$("app").hidden=true;$("auth").hidden=false;mode("reset");return}
     if(u&&(!user||user.id!==u.id)){user=u;start()}
-    else if(!u){user=null;items=[];if(channel){sb.removeChannel(channel);channel=null}$("app").hidden=true;$("auth").hidden=false}
+    else if(u){user=u;render()}
+    else{user=null;items=[];busy($("authBtn"),false);if(channel){sb.removeChannel(channel);channel=null}$("app").hidden=true;$("auth").hidden=false}
   });
-  sb.auth.getSession().then(({data})=>{if(!data.session){$("auth").hidden=false}}).catch(e=>say($("authMsg"),e.message));
+  sb.auth.getSession().then(({data})=>{if(!data.session)$("auth").hidden=false}).catch(e=>say($("authMsg"),e.message));
 }
-
-function greeting(){const h=new Date().getHours();return h>=5&&h<12?"Good morning":h<17&&h>=12?"Good afternoon":"Good evening"}
+function greeting(){const h=new Date().getHours();return h>=5&&h<12?"Good morning":h>=12&&h<17?"Good afternoon":"Good evening"}
 function firstName(u){const m=u.user_metadata||{};let n=(m.full_name||m.name||"").trim().split(/\s+/)[0]||(u.email||"").split("@")[0].split(/[\s._\-0-9]+/)[0]||"there";return n.charAt(0).toUpperCase()+n.slice(1)}
 async function start(){
-  $("auth").hidden=true;$("app").hidden=false;
+  busy($("authBtn"),false);$("auth").hidden=true;$("app").hidden=false;
+  $("app").classList.remove("enter");void $("app").offsetWidth;$("app").classList.add("enter");
+  $("list").innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
   $("greet").textContent=greeting()+", "+firstName(user)+" 👋";
   $("who").innerHTML="<i></i>"+esc(user.email);
-  await load();
+  resetForm();await load();
   if(channel)sb.removeChannel(channel);
   channel=sb.channel("exp-"+user.id).on("postgres_changes",{event:"*",schema:"public",table:"expenses",filter:"user_id=eq."+user.id},load).subscribe();
 }
 async function load(){
-  const {data,error}=await sb.from("expenses").select("*").order("spent_on",{ascending:false}).order("created_at",{ascending:false});
-  if(error)return say($("appMsg"),error.message);
+  const {data,error}=await sb.from("expenses").select("*").order("spent_on",{ascending:false}).order("spent_time",{ascending:false,nullsFirst:false}).order("created_at",{ascending:false});
+  if(error)return say($("appMsg"),error.message+" (If it mentions spent_time, run the latest schema.sql in Supabase.)");
   items=data;render();
 }
 
-// ---- Expenses ----
+/* ---------- Tabs ---------- */
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;
+  document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x===b));
+  ["home","cal","ins"].forEach(t=>$("t-"+t).hidden=t!==tab);const s=$("t-"+tab);s.classList.remove("fade");void s.offsetWidth;s.classList.add("fade");render()});
+
+/* ---------- Expenses: add / edit / delete ---------- */
+function resetForm(){editId=null;$("amount").value="";$("note").value="";$("date").value=today();$("time").value=nowT();
+  $("formTitle").textContent="Add expense";$("addBtn").textContent="+ Add expense";$("cancelBtn").hidden=true;say($("appMsg"),"")}
+$("cancelBtn").onclick=resetForm;
 $("addBtn").onclick=async()=>{
   const amount=parseFloat($("amount").value);
   if(!(amount>0)){$("amount").focus();return}
-  $("addBtn").disabled=true;
-  const {error}=await sb.from("expenses").insert({amount,category:$("cat").value,note:$("note").value.trim(),spent_on:$("date").value||today()});
-  $("addBtn").disabled=false;
+  const p={amount,category:$("cat").value,note:$("note").value.trim(),spent_on:$("date").value||today(),spent_time:$("time").value||null};
+  busy($("addBtn"),true);
+  const {error}=editId?await sb.from("expenses").update(p).eq("id",editId):await sb.from("expenses").insert(p);
+  busy($("addBtn"),false);
   if(error)return say($("appMsg"),error.message);
-  say($("appMsg"),"");$("amount").value="";$("note").value="";load();
+  resetForm();load();
 };
-async function del(id){const {error}=await sb.from("expenses").delete().eq("id",id);if(error)say($("appMsg"),error.message);else load()}
+function edit(id){const i=items.find(x=>x.id===id);if(!i)return;editId=id;
+  $("amount").value=i.amount;$("cat").value=i.category;$("note").value=i.note||"";$("date").value=i.spent_on;$("time").value=(i.spent_time||"").slice(0,5);
+  $("formTitle").textContent="Edit expense";$("addBtn").textContent="Save changes";$("cancelBtn").hidden=false;
+  document.querySelector('#tabs [data-t="home"]').click();$("form").scrollIntoView({behavior:"smooth"})}
+async function del(id){if(!confirm("Delete this expense?"))return;const {error}=await sb.from("expenses").delete().eq("id",id);if(error)say($("appMsg"),error.message);else load()}
+
+/* ---------- Budget ---------- */
+$("budBtn").onclick=async()=>{
+  const v=parseFloat($("budIn").value);
+  if(!(v>=0))return say($("budMsg"),"Enter a number, or 0 to remove it.");
+  const {error}=await sb.auth.updateUser({data:{budget:v}});
+  say($("budMsg"),error?error.message:(v?"Budget saved.":"Budget removed."),!error);
+};
+
+/* ---------- CSV ---------- */
+$("csvBtn").onclick=()=>{
+  const q=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
+  const rows=[["Date","Time","Category","Note","Amount"],...items.slice().reverse().map(i=>[i.spent_on,(i.spent_time||"").slice(0,5),i.category,i.note,i.amount])];
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+rows.map(r=>r.map(q).join(",")).join("\n")],{type:"text/csv"}));
+  a.download="spendgud-expenses.csv";a.click();URL.revokeObjectURL(a.href);
+};
+
+/* ---------- Rendering ---------- */
+const rowHtml=i=>`<div class="row${seen.has(i.id)?"":" fresh"}"><div class="ico" style="background:${col(i.category)[1]}22">${col(i.category)[0]}</div><div class="info" onclick="edit('${i.id}')"><div>${esc(i.note||i.category)}</div><small>${esc(i.category)}${i.spent_time?" · "+fmtT(i.spent_time):""}</small></div><div class="amt">${money(Number(i.amount))}</div><button class="del" aria-label="Edit" onclick="edit('${i.id}')">✎</button><button class="del" aria-label="Delete" onclick="del('${i.id}')">✕</button></div>`;
 
 function render(){
-  const t=today(),m=t.slice(0,7);
-  $("total").textContent=money(sum(items));
-  $("month").textContent=money(sum(items.filter(i=>i.spent_on.startsWith(m))));
-  $("today").textContent=money(sum(items.filter(i=>i.spent_on===t)));
-  $("count").textContent=items.length;
-  const by={},tot=sum(items);items.forEach(i=>by[i.category]=(by[i.category]||0)+Number(i.amount));
-  $("breakdown").hidden=!items.length;
-  const col=c=>(CATS[c]||CATS.Other);
-  const ents=Object.entries(by).sort((a,b)=>b[1]-a[1]);
-  $("bar").innerHTML=ents.map(([c,v])=>`<div style="width:${v/tot*100}%;background:${col(c)[1]}"></div>`).join("");
-  $("leg").innerHTML=ents.map(([c,v])=>`<span><i class="dot" style="background:${col(c)[1]}"></i>${esc(c)} ${Math.round(v/tot*100)}%</span>`).join("");
+  const t=today(),m=t.slice(0,7),monthSum=sum(items.filter(i=>i.spent_on.startsWith(m)));
+  countTo($("total"),sum(items));$("month").textContent=money(monthSum);
+  $("today").textContent=money(sum(items.filter(i=>i.spent_on===t)));$("count").textContent=items.length;
+  const b=Number(user&&user.user_metadata&&user.user_metadata.budget)||0;
+  $("bgt").hidden=!b;
+  if(b){const p=monthSum/b*100;$("bgtTxt").textContent=`Budget: ${money(monthSum)} of ${money(b)} (${Math.round(p)}%)`+(p>100?" – over budget":"");
+    $("bgtFill").style.width=Math.min(p,100)+"%";$("bgtFill").style.background=p<75?"#fff":p<100?"#ffd166":"#ff6b6b"}
+  if(document.activeElement!==$("budIn"))$("budIn").value=b||"";
+  if(tab==="home")renderHome();if(tab==="cal")renderCal();if(tab==="ins")renderIns();
+  items.forEach(i=>seen.add(i.id));
+}
+function renderHome(){
   $("chips").innerHTML=["All",...Object.keys(CATS)].map(c=>`<button class="chip ${c===filter?"on":""}" data-c="${c}">${c}</button>`).join("");
-  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filter=b.dataset.c;render()});
+  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filter=b.dataset.c;renderHome()});
   const shown=items.filter(i=>filter==="All"||i.category===filter);
   if(!shown.length){$("list").innerHTML='<div class="empty">No expenses yet. Add your first one above.</div>';return}
   const days={};shown.forEach(i=>(days[i.spent_on]=days[i.spent_on]||[]).push(i));
-  $("list").innerHTML=Object.keys(days).map(d=>{
-    const label=d===t?"Today":new Date(d+"T00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"});
-    return `<div class="day"><span>${label}</span><span>${money(sum(days[d]))}</span></div>`+days[d].map(i=>`<div class="row"><div class="ico" style="background:${col(i.category)[1]}22">${col(i.category)[0]}</div><div class="info"><div>${esc(i.note||i.category)}</div><small>${esc(i.category)}</small></div><div class="amt">${money(Number(i.amount))}</div><button class="del" aria-label="Delete" onclick="del('${i.id}')">✕</button></div>`).join("");
-  }).join("");
+  $("list").innerHTML=Object.keys(days).map(d=>`<div class="day"><span>${label(d)}</span><span>${money(sum(days[d]))}</span></div>`+days[d].map(rowHtml).join("")).join("");
+}
+function renderCal(){
+  const first=new Date(cy,cm,1),n=new Date(cy,cm+1,0).getDate(),lead=(first.getDay()+6)%7,pre=cy+"-"+pad(cm+1),tot={};
+  items.forEach(i=>{if(i.spent_on.startsWith(pre))tot[i.spent_on]=(tot[i.spent_on]||0)+Number(i.amount)});
+  let h=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(d=>`<div class="wd">${d}</div>`).join("")+"<div></div>".repeat(lead);
+  for(let d=1;d<=n;d++){const k=pre+"-"+pad(d),v=tot[k];h+=`<button class="cd${k===today()?" td":""}${k===sel?" sel":""}${v?" has":""}" data-d="${k}"><b>${d}</b><i>${v?short(v):""}</i></button>`}
+  $("calGrid").innerHTML=h;
+  $("calTitle").textContent=first.toLocaleDateString(undefined,{month:"long",year:"numeric"});
+  $("calTotal").textContent=money(Object.values(tot).reduce((a,b)=>a+b,0));
+  document.querySelectorAll(".cd").forEach(b=>b.onclick=()=>{sel=b.dataset.d;renderCal()});
+  const di=items.filter(i=>i.spent_on===sel);
+  $("dayTitle").textContent=label(sel)+(di.length?" · "+money(sum(di)):"");
+  $("dayList").innerHTML=di.length?di.map(rowHtml).join(""):'<div class="empty">No spending on this day.</div>';
+}
+function moveMonth(d){cm+=d;if(cm<0){cm=11;cy--}if(cm>11){cm=0;cy++}const p=cy+"-"+pad(cm+1);sel=today().startsWith(p)?today():p+"-01";renderCal()}
+$("pm").onclick=()=>moveMonth(-1);$("nm").onclick=()=>moveMonth(1);
+
+function renderIns(){
+  const t=today(),m=t.slice(0,7),dayN=+t.slice(8),dim=new Date(+t.slice(0,4),+t.slice(5,7),0).getDate();
+  const py=+t.slice(5,7)===1?+t.slice(0,4)-1:+t.slice(0,4),pm=(+t.slice(5,7)===1?12:+t.slice(5,7)-1),pre=py+"-"+pad(pm);
+  const thisM=items.filter(i=>i.spent_on.startsWith(m)),lastSame=items.filter(i=>i.spent_on.startsWith(pre)&&+i.spent_on.slice(8)<=dayN);
+  const out=[];
+  if(!items.length)out.push(["💡","Add a few expenses and your insights will appear here."]);
+  else{
+    const a=sum(thisM),b=sum(lastSame);
+    if(b>0){const p=Math.round(Math.abs(a-b)/b*100);out.push([a>b?"📈":"📉",a===b?"You’ve spent the same as the same days last month.":`You’ve spent <b>${p}% ${a>b?"more":"less"}</b> than over the same days last month.`])}
+    else if(a>0)out.push(["📊","No spending recorded for last month yet, so there’s nothing to compare."]);
+    if(a>0){
+      const by={};thisM.forEach(i=>by[i.category]=(by[i.category]||0)+Number(i.amount));
+      const [c,v]=Object.entries(by).sort((x,y)=>y[1]-x[1])[0];
+      out.push([col(c)[0],`Your top category this month is <b>${esc(c)}</b>: ${money(v)} (${Math.round(v/a*100)}% of your spending).`]);
+      const avg=a/dayN;out.push(["🗓️",`You spend about <b>${money(avg)}</b> a day. At this pace you’ll reach about <b>${money(avg*dim)}</b> by the end of the month.`]);
+    }
+    const wk=new Date();wk.setDate(wk.getDate()-6);const wkS=wk.getFullYear()+"-"+pad(wk.getMonth()+1)+"-"+pad(wk.getDate());
+    const w=items.filter(i=>i.spent_on>=wkS);
+    if(w.length){const big=w.reduce((x,y)=>Number(y.amount)>Number(x.amount)?y:x);out.push(["🔥",`Your biggest expense in the last 7 days was <b>${esc(big.note||big.category)}</b> (${money(Number(big.amount))}).`])}
+    const bg=Number(user&&user.user_metadata&&user.user_metadata.budget)||0;
+    if(bg>0){const left=bg-a;out.push(["🎯",left>=0?`You have <b>${money(left)}</b> left in your budget, about ${money(left/Math.max(dim-dayN+1,1))} a day for the rest of the month.`:`You’re <b>${money(-left)}</b> over your monthly budget.`])}
+  }
+  $("insights").innerHTML=out.map(([i,t])=>`<div class="ins"><span>${i}</span><div>${t}</div></div>`).join("");
+  const by={},tot=sum(items);items.forEach(i=>by[i.category]=(by[i.category]||0)+Number(i.amount));
+  const ents=Object.entries(by).sort((x,y)=>y[1]-x[1]);$("breakdown").hidden=!items.length;
+  $("bar").innerHTML=ents.map(([c,v])=>`<div style="width:${v/tot*100}%;background:${col(c)[1]}"></div>`).join("");
+  $("leg").innerHTML=ents.map(([c,v])=>`<span><i class="dot" style="background:${col(c)[1]}"></i>${esc(c)} ${Math.round(v/tot*100)}%</span>`).join("");
 }
 </script>
 </body>
