@@ -38,3 +38,9 @@ end $$;
 
 -- Added for the calendar / time feature (safe to run again)
 alter table public.expenses add column if not exists spent_time time;
+
+-- Multi-currency, tax tagging (safe to run again)
+alter table public.expenses add column if not exists orig_amount     numeric(14,2);
+alter table public.expenses add column if not exists orig_currency   text;
+alter table public.expenses add column if not exists fx_rate         numeric(18,8);
+alter table public.expenses add column if not exists tax_deductible  boolean not null default false;

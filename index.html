@@ -73,12 +73,22 @@ button{transition:transform .12s ease,background .2s ease}button:active{transfor
 .enter{animation:fadeUp .45s ease both}.fade{animation:fadeUp .25s ease both}
 .row.fresh{animation:fadeUp .3s ease both}
 .sk{height:52px;border-radius:12px;margin:10px 0;background:linear-gradient(90deg,var(--line) 25%,color-mix(in srgb,var(--line) 45%,var(--card)) 50%,var(--line) 75%);background-size:800px 100%;animation:shimmer 1.3s infinite linear}
+.offbar{position:sticky;top:0;z-index:20;background:#f59e0b;color:#1f1300;text-align:center;font-size:.85rem;font-weight:600;padding:8px 12px;border-radius:0 0 12px 12px;margin:-16px -16px 12px}
+.offcard{text-align:center;padding:22px 8px;color:var(--mute)}.offcard .em{font-size:2.6rem;margin-bottom:4px}.offcard b{display:block;color:var(--ink);font-size:1.05rem}.offcard p{margin:6px 0 14px}
+.tag{display:inline-block;font-size:.65rem;background:color-mix(in srgb,var(--brand) 18%,transparent);color:var(--brand);border-radius:6px;padding:1px 6px;margin-left:6px;font-weight:700;vertical-align:middle}
+.tx{background:var(--bg);color:var(--mute);border:1px solid var(--line);padding:10px;width:100%;font-weight:600}.tx.on{background:color-mix(in srgb,var(--brand) 18%,var(--card));color:var(--brand);border-color:var(--brand)}
+.del.tb{opacity:.4}.del.tb.on{opacity:1}
+.hint{font-size:.8rem;color:var(--mute);min-height:1.1em}.hint a{color:var(--mute)}
+.lim{display:grid;grid-template-columns:1fr 120px;gap:8px;align-items:center;margin-bottom:12px}.lim .bar{grid-column:1/-1;height:7px;margin:0}
+.tg{display:flex;align-items:center;gap:8px;font-size:.9rem;margin:6px 0}.tg input{width:auto}
+.toast{position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));max-width:480px;margin:0 auto;background:var(--ink);color:var(--bg);padding:12px 14px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:50;white-space:pre-line;font-size:.9rem;animation:fadeUp .3s ease both}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
+<div class="offbar" id="offbar" hidden></div>
 <section id="auth" hidden>
 <div class="card">
 <h1 style="text-align:center;font-size:1.6rem">spend<span>Gud</span></h1>
@@ -98,7 +108,7 @@ button{transition:transform .12s ease,background .2s ease}button:active{transfor
 
 <section id="app" hidden>
 <header><h1>spend<span>Gud</span></h1>
-<div style="display:flex;gap:8px;align-items:center"><div style="width:84px"><select id="cur" aria-label="Currency"><option>GH₵</option><option>$</option><option>€</option><option>£</option><option>₦</option></select></div><button class="sm" id="out">Log out</button></div></header>
+<div style="display:flex;gap:8px;align-items:center"><div style="width:84px"><select id="cur" aria-label="Your main currency"></select></div><button class="sm" id="out">Log out</button></div></header>
 <div style="margin:0 0 12px"><div id="greet" style="font-size:1.35rem;font-weight:700"></div><div class="live" id="who"></div></div>
 <section class="hero">
 <small>Total spent</small><div class="big" id="total">0.00</div>
@@ -111,9 +121,12 @@ button{transition:transform .12s ease,background .2s ease}button:active{transfor
 <section class="card" id="form"><h2 id="formTitle">Add expense</h2>
 <div class="grid keep">
 <input id="amount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Amount">
+<select id="fcur" aria-label="Currency paid in"></select>
 <select id="cat"></select>
+<button type="button" class="tx" id="taxBtn">🧾 Tax-deductible</button>
 <input id="note" class="full" type="text" placeholder="What was it for? (optional)" maxlength="60">
 <input id="date" type="date" aria-label="Date"><input id="time" type="time" aria-label="Time">
+<div class="hint full" id="fxHint"></div>
 <button class="pri full" id="addBtn">+ Add expense</button>
 <button class="sm full" id="cancelBtn" hidden>Cancel editing</button>
 </div><div class="msg" id="appMsg"></div></section>
@@ -128,8 +141,15 @@ button{transition:transform .12s ease,background .2s ease}button:active{transfor
 
 <div id="t-ins" hidden>
 <section class="card"><h2>Monthly budget</h2><div class="grid keep"><input id="budIn" type="number" inputmode="decimal" min="0" placeholder="e.g. 800"><button class="pri" id="budBtn">Set budget</button></div><div class="msg" id="budMsg"></div><small style="color:var(--mute)">Enter 0 to remove your budget.</small></section>
+<section class="card"><h2>Category limits &amp; alerts</h2>
+<div id="limList"></div>
+<label class="tg"><input type="checkbox" id="a75"> Warn me at 75% of a limit</label>
+<label class="tg"><input type="checkbox" id="a90"> Warn me at 90% of a limit</label>
+<div class="grid keep" style="margin-top:10px"><button class="ghost" id="notifBtn">🔔 Enable notifications</button><button class="pri" id="limSave">Save limits</button></div>
+<div class="msg" id="limMsg"></div></section>
 <section class="card"><h2>Insights</h2><div id="insights"></div></section>
 <section class="card" id="breakdown"><h2>Where your money goes</h2><div class="bar" id="bar"></div><div class="leg" id="leg"></div></section>
+<section class="card"><h2>Tax-deductible expenses</h2><div id="taxBox"></div><button class="ghost" id="taxCsvBtn">⬇ Download tax-deductible (CSV)</button><small style="color:var(--mute);display:block;margin-top:8px">For your records only, not tax advice. Keep your receipts.</small></section>
 <section class="card"><h2>Your data</h2><button class="ghost" id="csvBtn">⬇ Download all expenses (CSV)</button></section>
 </div>
 </section>
@@ -141,7 +161,7 @@ button{transition:transform .12s ease,background .2s ease}button:active{transfor
 const $=id=>document.getElementById(id);
 let sb=null,initErr="";
 try{
-  if(typeof supabase==="undefined")throw new Error("The Supabase library did not load. Check your internet connection or turn off any ad blocker, then refresh.");
+  if(typeof supabase==="undefined")throw new Error(navigator.onLine?"The Supabase library did not load. Turn off any ad blocker, then refresh.":"You’re offline. Connect to the internet and refresh to open spendGud.");
   if(typeof SUPABASE_URL==="undefined"||typeof SUPABASE_ANON_KEY==="undefined")throw new Error("config.js is missing. Upload config.js (with your Supabase URL and key) next to index.html.");
   const U=SUPABASE_URL.trim().replace(/\/rest\/v1\/?$/,"").replace(/\/+$/,""),K=SUPABASE_ANON_KEY.trim();
   if(U.includes("YOUR_SUPABASE"))throw new Error("The Project URL in config.js still has the placeholder. Paste your URL between the quotes.");
@@ -154,15 +174,17 @@ if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.ser
 
 const CATS={Food:["🍽️","#f59e0b"],Groceries:["🛒","#0f9d7a"],"Airtime & Data":["📱","#3b82f6"],Repairs:["🔧","#8b5cf6"],Transport:["🚌","#ec4899"],Other:["📦","#64748b"]};
 const col=c=>CATS[c]||CATS.Other;
-let items=[],cur="GH₵",filter="All",user=null,channel=null,am="login",tab="home",editId=null,recovering=/type=recovery/.test(location.hash);
-try{cur=localStorage.getItem("ff_cur")||cur}catch(e){}
-$("cur").value=cur;
+const SYM={GHS:"GH₵",USD:"$",EUR:"€",GBP:"£",NGN:"₦",KES:"KSh",ZAR:"R",CAD:"C$",AUD:"A$",CNY:"¥",INR:"₹",JPY:"¥"};
+let tax=false,items=[],cur="GHS",filter="All",user=null,channel=null,am="login",tab="home",editId=null,recovering=/type=recovery/.test(location.hash);
+try{const v=localStorage.getItem("ff_cur");cur=SYM[v]?v:(Object.keys(SYM).find(k=>SYM[k]===v)||"GHS")}catch(e){}
+const curOpts=Object.keys(SYM).map(c=>`<option value="${c}">${c}</option>`).join("");
+$("cur").innerHTML=curOpts;$("fcur").innerHTML=curOpts;$("cur").value=cur;$("fcur").value=cur;
 $("cat").innerHTML=Object.keys(CATS).map(c=>`<option>${c}</option>`).join("");
 const pad=n=>String(n).padStart(2,"0");
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
 const nowT=()=>{const d=new Date();return pad(d.getHours())+":"+pad(d.getMinutes())};
 let cy=+today().slice(0,4),cm=+today().slice(5,7)-1,sel=today();
-const money=n=>cur+" "+n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+const money=n=>(SYM[cur]||cur)+" "+n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
 const short=n=>n>=1000?(n/1000).toFixed(1)+"k":String(Math.round(n));
 const sum=a=>a.reduce((s,i)=>s+Number(i.amount),0);
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -171,6 +193,11 @@ function busy(b,on){clearTimeout(b._t);b.classList.toggle("busy",on);b.disabled=
 function countTo(el,to){const from=el._v||0;el._v=to;if(from===to||matchMedia("(prefers-reduced-motion:reduce)").matches){el.textContent=money(to);return}
   const t0=performance.now();(function f(t){const p=Math.min((t-t0)/600,1),e=1-Math.pow(1-p,3);el.textContent=money(from+(to-from)*e);if(p<1)requestAnimationFrame(f)})(t0)}
 const seen=new Set();
+let offline=false;
+const isNet=m=>!navigator.onLine||/failed to fetch|network|load failed/i.test(m||"");
+const friendly=m=>isNet(m)?"No internet connection. Check your network and try again.":m;
+function setOffline(on){offline=on;const b=$("offbar");b.hidden=!on;b.textContent=items.length?"📡 You’re offline. Showing your last saved data.":"📡 You’re offline."}
+const offlineHtml='<div class="offcard"><div class="em">📡</div><b>No internet connection</b><p>Check your Wi‑Fi or mobile data. Your expenses will load again as soon as you’re back online.</p><button class="sm" id="retry">Try again</button></div>';
 const fmtT=t=>{if(!t)return"";const [h,m]=t.split(":"),d=new Date();d.setHours(+h,+m);return d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"})};
 const label=d=>d===today()?"Today":new Date(d+"T00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"});
 
@@ -188,12 +215,12 @@ $("fgLink").onclick=()=>mode("forgot");
 $("eye").onclick=()=>{const h=$("pass").type==="password";$("pass").type=h?"text":"password";$("eye").textContent=h?"Hide":"Show";$("eye").setAttribute("aria-label",h?"Hide password":"Show password")};
 $("authBtn").onclick=async()=>{
   const email=$("email").value.trim(),password=$("pass").value,name=$("name").value.trim(),m=$("authMsg"),b=$("authBtn");
-  const fail=t=>{busy(b,false);say(m,t)};
+  const fail=t=>{busy(b,false);say(m,friendly(t))};
   let r;
   if(am==="forgot"){
     if(!email)return say(m,"Enter your email first.");
     busy(b,true);r=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin});busy(b,false);
-    return say(m,r.error?r.error.message:"Done. Check your email for the reset link.",!r.error);
+    return say(m,r.error?friendly(r.error.message):"Done. Check your email for the reset link.",!r.error);
   }
   if(am==="reset"){
     if(password.length<6)return say(m,"Use a password of at least 6 characters.");
@@ -208,9 +235,9 @@ $("authBtn").onclick=async()=>{
   if(r.error)return fail(r.error.message);
   if(am==="signup"&&!r.data.session){busy(b,false);say(m,"Check your email to confirm your account, then log in.",true)}
 };
-$("gBtn").onclick=async()=>{busy($("gBtn"),true);const {error}=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin}});if(error){busy($("gBtn"),false);say($("authMsg"),error.message)}};
-$("out").onclick=()=>sb.auth.signOut();
-$("cur").onchange=e=>{cur=e.target.value;try{localStorage.setItem("ff_cur",cur)}catch(x){}render()};
+$("gBtn").onclick=async()=>{busy($("gBtn"),true);const {error}=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin}});if(error){busy($("gBtn"),false);say($("authMsg"),friendly(error.message))}};
+$("out").onclick=()=>{try{localStorage.removeItem("sg_cache_"+user.id)}catch(e){}sb.auth.signOut()};
+$("cur").onchange=e=>{cur=e.target.value;try{localStorage.setItem("ff_cur",cur)}catch(x){}$("fcur").value=cur;fxHint();render()};
 
 $("auth").hidden=false;
 if(!sb){say($("authMsg"),"Setup problem: "+initErr);["authBtn","gBtn"].forEach(id=>$(id).disabled=true)}
@@ -238,9 +265,19 @@ async function start(){
   channel=sb.channel("exp-"+user.id).on("postgres_changes",{event:"*",schema:"public",table:"expenses",filter:"user_id=eq."+user.id},load).subscribe();
 }
 async function load(){
-  const {data,error}=await sb.from("expenses").select("*").order("spent_on",{ascending:false}).order("spent_time",{ascending:false,nullsFirst:false}).order("created_at",{ascending:false});
-  if(error)return say($("appMsg"),error.message+" (If it mentions spent_time, run the latest schema.sql in Supabase.)");
-  items=data;render();
+  try{
+    const {data,error}=await sb.from("expenses").select("*").order("spent_on",{ascending:false}).order("spent_time",{ascending:false,nullsFirst:false}).order("created_at",{ascending:false});
+    if(error)throw error;
+    items=data;setOffline(false);say($("appMsg"),"");setTimeout(checkNudges,0);
+    try{localStorage.setItem("sg_cache_"+user.id,JSON.stringify(items))}catch(x){}
+  }catch(e){
+    const msg=(e&&e.message)||String(e);
+    if(isNet(msg)){
+      if(!items.length){try{items=JSON.parse(localStorage.getItem("sg_cache_"+user.id)||"[]")}catch(x){}}
+      setOffline(true);
+    }else say($("appMsg"),msg+(/spent_time/.test(msg)?" (Run the latest schema.sql in Supabase.)":""));
+  }
+  render();
 }
 
 /* ---------- Tabs ---------- */
@@ -248,44 +285,113 @@ document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{tab=b.datase
   document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x===b));
   ["home","cal","ins"].forEach(t=>$("t-"+t).hidden=t!==tab);const s=$("t-"+tab);s.classList.remove("fade");void s.offsetWidth;s.classList.add("fade");render()});
 
+/* ---------- Exchange rates ---------- */
+async function rateOf(code){ // your-currency units per 1 unit of `code`
+  if(code===cur)return 1;
+  let c={};try{c=JSON.parse(localStorage.getItem("sg_fx_"+cur)||"{}")}catch(e){}
+  if(!c.t||Date.now()-c.t>6*36e5||!c.r[code]){
+    try{const r=await fetch("https://open.er-api.com/v6/latest/"+cur),j=await r.json(),rt=j.rates||j.conversion_rates;
+      if(j.result==="success"&&rt){c={t:Date.now(),r:rt};localStorage.setItem("sg_fx_"+cur,JSON.stringify(c))}}catch(e){}
+  }
+  return c.r&&c.r[code]?1/c.r[code]:null;
+}
+async function fxHint(){
+  const code=$("fcur").value,a=parseFloat($("amount").value),h=$("fxHint");
+  if(code===cur){h.textContent="";return}
+  h.textContent="Getting exchange rate…";
+  const r=await rateOf(code);if($("fcur").value!==code)return;
+  h.innerHTML=r?(a>0?`≈ <b>${money(a*r)}</b> · `:"")+`1 ${code} = ${r.toFixed(r<0.01?6:4)} ${cur} (daily rate · <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Exchange Rate API</a>)`:"Couldn’t get the exchange rate. Check your connection.";
+}
+$("fcur").onchange=fxHint;$("amount").oninput=fxHint;
+$("taxBtn").onclick=()=>{tax=!tax;$("taxBtn").classList.toggle("on",tax)};
+async function toggleTax(id){
+  if(!navigator.onLine)return say($("appMsg"),"You’re offline. Connect to the internet to change expenses.");
+  const i=items.find(x=>x.id===id);if(!i)return;
+  const {error}=await sb.from("expenses").update({tax_deductible:!i.tax_deductible}).eq("id",id);
+  if(error)say($("appMsg"),friendly(error.message));else load();
+}
+
+/* ---------- Category limit nudges ---------- */
+const meta=()=>(user&&user.user_metadata)||{};
+function toast(t){const d=document.createElement("div");d.className="toast";d.textContent=t;d.onclick=()=>d.remove();document.body.appendChild(d);setTimeout(()=>d.remove(),8000)}
+function notify(body){
+  if(!("Notification" in window)||Notification.permission!=="granted"||!document.hidden)return;
+  const o={body,icon:"icon-192.png"};
+  (navigator.serviceWorker?navigator.serviceWorker.ready.then(r=>r.showNotification("spendGud",o)):Promise.reject()).catch(()=>{try{new Notification("spendGud",o)}catch(e){}});
+}
+function checkNudges(){
+  if(!user)return;
+  const L=meta().limits||{},A=meta().alerts||{},m=today().slice(0,7),key="sg_nudge_"+user.id+"_"+m;
+  let st={};try{st=JSON.parse(localStorage.getItem(key)||"{}")}catch(e){}
+  const mb={};items.forEach(i=>{if(i.spent_on.startsWith(m))mb[i.category]=(mb[i.category]||0)+Number(i.amount)});
+  const msgs=[];
+  Object.keys(L).forEach(c=>{
+    const lim=Number(L[c]);if(!(lim>0))return;
+    const sp=mb[c]||0,pct=sp/lim*100,old=st[c]||0;
+    const lvl=pct>=100?100:(pct>=90&&A.a90!==false)?90:(pct>=75&&A.a75!==false)?75:0;
+    if(lvl>old){st[c]=lvl;msgs.push((lvl===100?"🚨 ":lvl===90?"🚨 ":"⚠️ ")+col(c)[0]+" "+c+": "+(lvl===100?"limit reached":Math.floor(pct)+"% of your limit used")+" ("+money(sp)+" of "+money(lim)+")")}
+    else if(pct<75)st[c]=0;
+  });
+  try{localStorage.setItem(key,JSON.stringify(st))}catch(e){}
+  if(msgs.length){toast(msgs.join("\n"));msgs.forEach(notify)}
+}
+$("notifBtn").onclick=async()=>{
+  if(!("Notification" in window))return say($("limMsg"),"This browser doesn’t support notifications.");
+  const p=await Notification.requestPermission();
+  say($("limMsg"),p==="granted"?"Notifications are on for this device.":"Notifications are blocked. Allow them in your browser settings.",p==="granted");renderExtras();
+};
+$("limSave").onclick=async()=>{
+  if(!navigator.onLine)return say($("limMsg"),"You’re offline. Connect to the internet to save.");
+  const limits={};document.querySelectorAll("#limList input").forEach(i=>{const v=parseFloat(i.value);if(v>0)limits[i.dataset.c]=v});
+  const {error}=await sb.auth.updateUser({data:{limits,alerts:{a75:$("a75").checked,a90:$("a90").checked}}});
+  say($("limMsg"),error?friendly(error.message):"Limits saved.",!error);if(!error)setTimeout(checkNudges,300);
+};
+
 /* ---------- Expenses: add / edit / delete ---------- */
-function resetForm(){editId=null;$("amount").value="";$("note").value="";$("date").value=today();$("time").value=nowT();
+function resetForm(){editId=null;tax=false;$("taxBtn").classList.remove("on");$("fcur").value=cur;$("fxHint").textContent="";$("amount").value="";$("note").value="";$("date").value=today();$("time").value=nowT();
   $("formTitle").textContent="Add expense";$("addBtn").textContent="+ Add expense";$("cancelBtn").hidden=true;say($("appMsg"),"")}
 $("cancelBtn").onclick=resetForm;
 $("addBtn").onclick=async()=>{
-  const amount=parseFloat($("amount").value);
-  if(!(amount>0)){$("amount").focus();return}
-  const p={amount,category:$("cat").value,note:$("note").value.trim(),spent_on:$("date").value||today(),spent_time:$("time").value||null};
+  const entered=parseFloat($("amount").value),code=$("fcur").value;
+  if(!(entered>0)){$("amount").focus();return}
+  if(!navigator.onLine)return say($("appMsg"),"You’re offline. Connect to the internet to add or change expenses.");
   busy($("addBtn"),true);
+  const old=editId&&items.find(x=>x.id===editId);let rate=1;
+  if(code!==cur){rate=(old&&old.orig_currency===code&&old.fx_rate)?Number(old.fx_rate):await rateOf(code);
+    if(!rate){busy($("addBtn"),false);return say($("appMsg"),"Couldn’t get the exchange rate. Check your connection and try again.")}}
+  const fx=code!==cur;
+  const p={amount:Math.round(entered*rate*100)/100,category:$("cat").value,note:$("note").value.trim(),spent_on:$("date").value||today(),spent_time:$("time").value||null,tax_deductible:tax,orig_amount:fx?entered:null,orig_currency:fx?code:null,fx_rate:fx?rate:null};
   const {error}=editId?await sb.from("expenses").update(p).eq("id",editId):await sb.from("expenses").insert(p);
   busy($("addBtn"),false);
-  if(error)return say($("appMsg"),error.message);
+  if(error)return say($("appMsg"),friendly(error.message));
   resetForm();load();
 };
 function edit(id){const i=items.find(x=>x.id===id);if(!i)return;editId=id;
-  $("amount").value=i.amount;$("cat").value=i.category;$("note").value=i.note||"";$("date").value=i.spent_on;$("time").value=(i.spent_time||"").slice(0,5);
+  $("amount").value=i.orig_amount||i.amount;$("fcur").value=i.orig_currency||cur;tax=!!i.tax_deductible;$("taxBtn").classList.toggle("on",tax);fxHint();$("cat").value=i.category;$("note").value=i.note||"";$("date").value=i.spent_on;$("time").value=(i.spent_time||"").slice(0,5);
   $("formTitle").textContent="Edit expense";$("addBtn").textContent="Save changes";$("cancelBtn").hidden=false;
   document.querySelector('#tabs [data-t="home"]').click();$("form").scrollIntoView({behavior:"smooth"})}
-async function del(id){if(!confirm("Delete this expense?"))return;const {error}=await sb.from("expenses").delete().eq("id",id);if(error)say($("appMsg"),error.message);else load()}
+async function del(id){if(!navigator.onLine)return say($("appMsg"),"You’re offline. Connect to the internet to delete expenses.");if(!confirm("Delete this expense?"))return;const {error}=await sb.from("expenses").delete().eq("id",id);if(error)say($("appMsg"),friendly(error.message));else load()}
 
 /* ---------- Budget ---------- */
 $("budBtn").onclick=async()=>{
   const v=parseFloat($("budIn").value);
   if(!(v>=0))return say($("budMsg"),"Enter a number, or 0 to remove it.");
   const {error}=await sb.auth.updateUser({data:{budget:v}});
-  say($("budMsg"),error?error.message:(v?"Budget saved.":"Budget removed."),!error);
+  say($("budMsg"),error?friendly(error.message):(v?"Budget saved.":"Budget removed."),!error);
 };
 
 /* ---------- CSV ---------- */
-$("csvBtn").onclick=()=>{
+function csv(list,name){
   const q=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
-  const rows=[["Date","Time","Category","Note","Amount"],...items.slice().reverse().map(i=>[i.spent_on,(i.spent_time||"").slice(0,5),i.category,i.note,i.amount])];
+  const rows=[["Date","Time","Category","Note","Amount ("+cur+")","Original amount","Original currency","Exchange rate","Tax deductible"],...list.slice().reverse().map(i=>[i.spent_on,(i.spent_time||"").slice(0,5),i.category,i.note,i.amount,i.orig_amount||"",i.orig_currency||"",i.fx_rate||"",i.tax_deductible?"Yes":"No"])];
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+rows.map(r=>r.map(q).join(",")).join("\n")],{type:"text/csv"}));
-  a.download="spendgud-expenses.csv";a.click();URL.revokeObjectURL(a.href);
-};
+  a.download=name;a.click();URL.revokeObjectURL(a.href);
+}
+$("csvBtn").onclick=()=>csv(items,"spendgud-expenses.csv");
+$("taxCsvBtn").onclick=()=>csv(items.filter(i=>i.tax_deductible),"spendgud-tax-deductible.csv");
 
 /* ---------- Rendering ---------- */
-const rowHtml=i=>`<div class="row${seen.has(i.id)?"":" fresh"}"><div class="ico" style="background:${col(i.category)[1]}22">${col(i.category)[0]}</div><div class="info" onclick="edit('${i.id}')"><div>${esc(i.note||i.category)}</div><small>${esc(i.category)}${i.spent_time?" · "+fmtT(i.spent_time):""}</small></div><div class="amt">${money(Number(i.amount))}</div><button class="del" aria-label="Edit" onclick="edit('${i.id}')">✎</button><button class="del" aria-label="Delete" onclick="del('${i.id}')">✕</button></div>`;
+const rowHtml=i=>`<div class="row${seen.has(i.id)?"":" fresh"}"><div class="ico" style="background:${col(i.category)[1]}22">${col(i.category)[0]}</div><div class="info" onclick="edit('${i.id}')"><div>${esc(i.note||i.category)}${i.tax_deductible?'<span class="tag">TAX</span>':""}</div><small>${esc(i.category)}${i.spent_time?" · "+fmtT(i.spent_time):""}${i.orig_currency?" · "+Number(i.orig_amount).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+" "+i.orig_currency:""}</small></div><div class="amt">${money(Number(i.amount))}</div><button class="del tb${i.tax_deductible?" on":""}" aria-label="Toggle tax-deductible" title="Tax-deductible" onclick="toggleTax('${i.id}')">🧾</button><button class="del" aria-label="Edit" onclick="edit('${i.id}')">✎</button><button class="del" aria-label="Delete" onclick="del('${i.id}')">✕</button></div>`;
 
 function render(){
   const t=today(),m=t.slice(0,7),monthSum=sum(items.filter(i=>i.spent_on.startsWith(m)));
@@ -296,10 +402,11 @@ function render(){
   if(b){const p=monthSum/b*100;$("bgtTxt").textContent=`Budget: ${money(monthSum)} of ${money(b)} (${Math.round(p)}%)`+(p>100?" – over budget":"");
     $("bgtFill").style.width=Math.min(p,100)+"%";$("bgtFill").style.background=p<75?"#fff":p<100?"#ffd166":"#ff6b6b"}
   if(document.activeElement!==$("budIn"))$("budIn").value=b||"";
-  if(tab==="home")renderHome();if(tab==="cal")renderCal();if(tab==="ins")renderIns();
+  if(tab==="home")renderHome();if(tab==="cal")renderCal();if(tab==="ins"){renderIns();renderExtras()}
   items.forEach(i=>seen.add(i.id));
 }
 function renderHome(){
+  if(offline&&!items.length){$("chips").innerHTML="";$("list").innerHTML=offlineHtml;$("retry").onclick=e=>{e.target.textContent="Trying…";load()};return}
   $("chips").innerHTML=["All",...Object.keys(CATS)].map(c=>`<button class="chip ${c===filter?"on":""}" data-c="${c}">${c}</button>`).join("");
   document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filter=b.dataset.c;renderHome()});
   const shown=items.filter(i=>filter==="All"||i.category===filter);
@@ -321,8 +428,20 @@ function renderCal(){
   $("dayList").innerHTML=di.length?di.map(rowHtml).join(""):'<div class="empty">No spending on this day.</div>';
 }
 function moveMonth(d){cm+=d;if(cm<0){cm=11;cy--}if(cm>11){cm=0;cy++}const p=cy+"-"+pad(cm+1);sel=today().startsWith(p)?today():p+"-01";renderCal()}
+window.addEventListener("online",()=>{if(user)load()});
+window.addEventListener("offline",()=>{if(user){setOffline(true);render()}});
 $("pm").onclick=()=>moveMonth(-1);$("nm").onclick=()=>moveMonth(1);
 
+function renderExtras(){
+  const m=today().slice(0,7),mb={};items.forEach(i=>{if(i.spent_on.startsWith(m))mb[i.category]=(mb[i.category]||0)+Number(i.amount)});
+  const L=meta().limits||{},A=meta().alerts||{},ae=document.activeElement;
+  if(!(ae&&ae.dataset&&ae.dataset.c))$("limList").innerHTML=Object.keys(CATS).map(c=>{const lim=Number(L[c])||0,sp=mb[c]||0,p=lim?sp/lim*100:0;
+    return `<div class="lim"><span>${col(c)[0]} ${c}<br><small style="color:var(--mute)">${lim?money(sp)+" of "+money(lim):money(sp)+" this month"}</small></span><input type="number" min="0" inputmode="decimal" data-c="${c}" value="${lim||""}" placeholder="No limit">${lim?`<div class="bar"><div style="width:${Math.min(p,100)}%;background:${p>=90?"#d9534f":p>=75?"#f59e0b":"var(--brand)"}"></div></div>`:""}</div>`}).join("");
+  if(ae!==$("a75"))$("a75").checked=A.a75!==false;if(ae!==$("a90"))$("a90").checked=A.a90!==false;
+  $("notifBtn").textContent=("Notification" in window)&&Notification.permission==="granted"?"🔔 Notifications on":"🔔 Enable notifications";
+  const yr=today().slice(0,4),tx=items.filter(i=>i.tax_deductible),ty=tx.filter(i=>i.spent_on.startsWith(yr));
+  $("taxBox").innerHTML=tx.length?`<div class="ins"><span>🧾</span><div><b>${money(sum(ty))}</b> tax-deductible so far in ${yr} (${ty.length} expense${ty.length===1?"":"s"}). All time: ${money(sum(tx))}.</div></div>`:'<div class="empty">Tap 🧾 on an expense to mark it as a tax-deductible business expense.</div>';
+}
 function renderIns(){
   const t=today(),m=t.slice(0,7),dayN=+t.slice(8),dim=new Date(+t.slice(0,4),+t.slice(5,7),0).getDate();
   const py=+t.slice(5,7)===1?+t.slice(0,4)-1:+t.slice(0,4),pm=(+t.slice(5,7)===1?12:+t.slice(5,7)-1),pre=py+"-"+pad(pm);
