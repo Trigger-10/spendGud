@@ -1,5 +1,6 @@
--- Run this in Supabase: SQL Editor > New query > paste > Run
--- Safe to run more than once.
+-- spendGud database setup
+-- Supabase: SQL Editor > New query > paste all of this > Run
+-- Safe to run more than once, and safe on a database that already has an older version.
 
 create table if not exists public.expenses (
   id         uuid primary key default gen_random_uuid(),
@@ -8,12 +9,16 @@ create table if not exists public.expenses (
   category   text not null default 'Other',
   note       text not null default '',
   spent_on   date not null default current_date,
+  spent_time time,
   created_at timestamptz not null default now()
 );
 
+-- For databases created with an older version of this file
+alter table public.expenses add column if not exists spent_time time;
+
 create index if not exists expenses_user_date_idx on public.expenses (user_id, spent_on desc);
 
--- Let logged-in users reach the table through the Data API (needed on newer Supabase projects)
+-- Let logged-in users reach the table through the Data API
 grant select, insert, update, delete on public.expenses to authenticated;
 grant select, insert, update, delete on public.expenses to service_role;
 
@@ -30,17 +35,8 @@ create policy "insert own expenses" on public.expenses for insert to authenticat
 create policy "update own expenses" on public.expenses for update to authenticated using (auth.uid() = user_id);
 create policy "delete own expenses" on public.expenses for delete to authenticated using (auth.uid() = user_id);
 
--- Real-time updates (ignore the "already member" message if you see it)
+-- Real-time updates
 do $$ begin
   alter publication supabase_realtime add table public.expenses;
 exception when duplicate_object then null;
 end $$;
-
--- Added for the calendar / time feature (safe to run again)
-alter table public.expenses add column if not exists spent_time time;
-
--- Multi-currency, tax tagging (safe to run again)
-alter table public.expenses add column if not exists orig_amount     numeric(14,2);
-alter table public.expenses add column if not exists orig_currency   text;
-alter table public.expenses add column if not exists fx_rate         numeric(18,8);
-alter table public.expenses add column if not exists tax_deductible  boolean not null default false;
