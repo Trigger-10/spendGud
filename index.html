@@ -63,6 +63,7 @@ button{font:inherit;cursor:pointer;border:0;border-radius:10px}
 .fg{text-align:right;font-size:.85rem;margin-top:-2px}
 .live{font-size:.75rem;color:var(--mute)}.live i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--brand);margin-right:4px}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes shimmer{from{background-position:-400px 0}to{background-position:400px 0}}
 button{transition:transform .12s ease,background .2s ease}button:active{transform:scale(.97)}
@@ -70,7 +71,7 @@ button{transition:transform .12s ease,background .2s ease}button:active{transfor
 .busy::after{content:"";position:absolute;inset:0;margin:auto;width:20px;height:20px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 .ghost.busy::after{border-color:var(--line);border-top-color:var(--brand)}
 #auth .card{animation:fadeUp .5s ease both}
-.enter{animation:fadeUp .45s ease both}.fade{animation:fadeUp .25s ease both}
+.enter{animation:fadeIn .45s ease}.fade{animation:fadeUp .25s ease both}
 .row.fresh{animation:fadeUp .3s ease both}
 .sk{height:52px;border-radius:12px;margin:10px 0;background:linear-gradient(90deg,var(--line) 25%,color-mix(in srgb,var(--line) 45%,var(--card)) 50%,var(--line) 75%);background-size:800px 100%;animation:shimmer 1.3s infinite linear}
 .offbar{position:sticky;top:0;z-index:20;background:#f59e0b;color:#1f1300;text-align:center;font-size:.85rem;font-weight:600;padding:8px 12px;border-radius:0 0 12px 12px;margin:-16px -16px 12px}
@@ -136,7 +137,7 @@ body.sheet #form{display:block;position:fixed;left:0;right:0;bottom:0;max-width:
 
 <section class="card"><h2>History <span class="live" style="float:right"><i></i>Live</span></h2>
 <input id="q" type="search" placeholder="Search (e.g. yam)">
-<div class="srch"><input id="dFrom" type="date" aria-label="From date"><input id="dTo" type="date" aria-label="To date"></div>
+<select id="dRange" aria-label="Filter by date" style="margin:8px 0"><option value="">All dates</option><option value="today">Today</option><option value="week">Last 7 days</option><option value="month">This month</option><option value="last">Last month</option></select>
 <div class="hint" id="resInfo" style="margin-bottom:6px"></div><div class="chips" id="chips"></div><div id="list"></div></section>
 </div>
 
@@ -353,10 +354,15 @@ function renderHome(){
   if(offline&&!items.length){$("chips").innerHTML="";$("list").innerHTML=offlineHtml;$("retry").onclick=e=>{e.target.textContent="Trying…";load()};return}
   $("chips").innerHTML=["All",...cats()].map(c=>`<button class="chip ${c===filter?"on":""}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
   document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{filter=b.dataset.c;renderHome()});
-  const qq=$("q").value.trim().toLowerCase(),df=$("dFrom").value,dt=$("dTo").value,act=qq||df||dt||filter!=="All";
+  const qq=$("q").value.trim().toLowerCase(),rg=$("dRange").value,t0=today();let df="",dt="";
+  if(rg==="today")df=dt=t0;
+  else if(rg==="week"){const d=new Date();d.setDate(d.getDate()-6);df=d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());dt=t0}
+  else if(rg==="month"){df=t0.slice(0,7)+"-01";dt=t0.slice(0,7)+"-31"}
+  else if(rg==="last"){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-1);const pm=d.getFullYear()+"-"+pad(d.getMonth()+1);df=pm+"-01";dt=pm+"-31"}
+  const act=qq||rg||filter!=="All";
   const shown=items.filter(i=>(filter==="All"||i.category===filter)&&(!qq||((i.note||"")+" "+i.category).toLowerCase().includes(qq))&&(!df||i.spent_on>=df)&&(!dt||i.spent_on<=dt));
   $("resInfo").innerHTML=act?`${shown.length} result${shown.length===1?"":"s"} · ${money(sum(shown))} · <a id="clr" style="color:var(--brand);cursor:pointer">Clear</a>`:"";
-  if(act)$("clr").onclick=()=>{$("q").value="";$("dFrom").value="";$("dTo").value="";filter="All";renderHome()};
+  if(act)$("clr").onclick=()=>{$("q").value="";$("dRange").value="";filter="All";renderHome()};
   if(!shown.length){$("list").innerHTML=act?'<div class="empty">No expenses match your search.</div>':'<div class="empty">No expenses yet. Tap the + button to add your first one.</div>';return}
   const days={};shown.forEach(i=>(days[i.spent_on]=days[i.spent_on]||[]).push(i));
   $("list").innerHTML=Object.keys(days).map(d=>`<div class="day"><span>${label(d)}</span><span>${money(sum(days[d]))}</span></div>`+days[d].map(rowHtml).join("")).join("");
@@ -382,7 +388,7 @@ function closeSheet(){document.body.classList.remove("sheet")}
 function closeAll(){resetForm();closeSheet()}
 $("fab").onclick=()=>{resetForm();openSheet()};$("scrim").onclick=closeAll;$("closeSheet").onclick=closeAll;
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAll()});
-$("q").oninput=renderHome;$("dFrom").onchange=renderHome;$("dTo").onchange=renderHome;
+$("q").oninput=renderHome;$("dRange").onchange=renderHome;
 
 async function setMeta(patch,el,ok){
   if(!navigator.onLine){say(el,"You’re offline. Connect to the internet to save.");return false}
